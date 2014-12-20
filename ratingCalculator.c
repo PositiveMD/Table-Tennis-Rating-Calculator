@@ -183,27 +183,43 @@ int main (int argc, char *argv[]){
 	int higherRatedPlayer;
 	int playerRatingDifference;
 	int winner;
+	int gamesPlayed;
+	int i;
 
 	initializeBracketValueTable();
 
+	printf("How games did you play?: ");
+	scanf("%d", &gamesPlayed);
+
 	player1ELO = getPlayerELO(1);
-	player2ELO = getPlayerELO(2);
 
-	playerRatingDifference = abs(player1ELO - player2ELO);
+	for (i = 0 ; i < gamesPlayed ; i ++){
 
-	if (max(player1ELO, player2ELO) == player1ELO)
-		higherRatedPlayer = PLAYER1;
-	else
-		higherRatedPlayer = PLAYER2;
+		player2ELO = getPlayerELO(2);
 
-	winner = -1;
+		playerRatingDifference = abs(player1ELO - player2ELO);
 
-	while (winner != 1 && winner != 2){
+		if (max(player1ELO, player2ELO) == player1ELO)
+			higherRatedPlayer = PLAYER1;
+		else
+			higherRatedPlayer = PLAYER2;
 
-		printf("\nWho won the game?\nPlayer 1 or Player 2\n(enter 1 or 2): ");
-		scanf("%d", &winner);
 
+		winner = -1;
+
+		while (winner != 1 && winner != 2){
+
+			printf("\nWho won the game?\nPlayer 1 or Player 2\n(enter 1 or 2): ");
+			scanf("%d", &winner);
+
+		}
 	}
+	
+
+	
+
+
+	
 
 	determineBracket(&player1ELO,&player2ELO, higherRatedPlayer, playerRatingDifference, winner);
 
