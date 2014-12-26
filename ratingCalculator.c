@@ -1,30 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#define NUMBER_OF_BRACKETS 11
-
-typedef enum {
-	PLAYER1 = 1, PLAYER2
-} players;
-
-typedef enum{
-	BRACKET1 = 1, BRACKET2, BRACKET3, BRACKET4, BRACKET5, BRACKET6, BRACKET7, 
-	BRACKET8, BRACKET9, BRACKET10, BRACKET11
-} bracketType;
-
-typedef struct bracketValues
-{
-	int expectedResult;
-	int upsetResult;
-}bracketValues;
-
-static bracketValues bracketValueTable[NUMBER_OF_BRACKETS + 1];
-
-void initializeBracketValueTable();
-int getPlayerELO(int playerNumber);
-int max (int a, int b);
-void determineBracket (int* player1ELO, int* player2ELO, int higherRatedPlayer, int playerRatingDifference, int winner);
-void determineNewRating (int* player1ELO, int* player2ELO, int higherRatedPlayer, int winner, int bracketNumber);
+#include "ratingCalculator.h"
 
 void initializeBracketValueTable(){
 
@@ -63,13 +37,13 @@ void initializeBracketValueTable(){
 
 }
 
-int getPlayerELO(int playerNumber){
+int getOpponentELO(int opponentNumber){
 
 	int playerElo = -1;
 
-	while (playerElo < 0){
+	while (playerElo <= 0){
 
-		printf("Please enter the rating (greater than 0) for player %d: ", playerNumber);
+		printf("\nPlease enter the rating (greater than 0) for Opponent %d: ", opponentNumber);
 		scanf("%d", &playerElo);
 	}
 
@@ -83,73 +57,73 @@ int max (int a, int b){
 	return (a > b ? a : b);
 }
 
-void determineBracket (int* player1ELO, int* player2ELO, int higherRatedPlayer, int playerRatingDifference, int winner){
+void determineBracket (int* player1Pool, int higherRatedPlayer, int playerRatingDifference, int winner){
 
 	//Bracket 1
 	if (playerRatingDifference >= 0 && playerRatingDifference <= 12)
 	{	
-		determineNewRating(player1ELO, player2ELO, higherRatedPlayer, winner, BRACKET1);
+		determineNewRating(player1Pool, higherRatedPlayer, winner, BRACKET1);
 	}
 	//Bracket 2
 	else if (playerRatingDifference >= 13 && playerRatingDifference <= 37)
 	{
-		determineNewRating(player1ELO, player2ELO, higherRatedPlayer, winner, BRACKET2);
+		determineNewRating(player1Pool, higherRatedPlayer, winner, BRACKET2);
 	}
 	//Bracket 3
 	else if (playerRatingDifference >= 38 && playerRatingDifference <= 62)
 	{
-		determineNewRating(player1ELO, player2ELO, higherRatedPlayer, winner, BRACKET3);
+		determineNewRating(player1Pool, higherRatedPlayer, winner, BRACKET3);
 	}
 	else if (playerRatingDifference >= 63 && playerRatingDifference <= 87)
 	{
-		determineNewRating(player1ELO, player2ELO, higherRatedPlayer, winner, BRACKET4);
+		determineNewRating(player1Pool, higherRatedPlayer, winner, BRACKET4);
 	}
 	else if (playerRatingDifference >= 88 && playerRatingDifference <= 112)
 	{
-		determineNewRating(player1ELO, player2ELO, higherRatedPlayer, winner, BRACKET5);
+		determineNewRating(player1Pool, higherRatedPlayer, winner, BRACKET5);
 	}
 	else if (playerRatingDifference >= 113 && playerRatingDifference <= 137)
 	{
-		determineNewRating(player1ELO, player2ELO, higherRatedPlayer, winner, BRACKET6);
+		determineNewRating(player1Pool, higherRatedPlayer, winner, BRACKET6);
 	}
 	else if (playerRatingDifference >= 138 && playerRatingDifference <= 162)
 	{
-		determineNewRating(player1ELO, player2ELO, higherRatedPlayer, winner, BRACKET7);
+		determineNewRating(player1Pool, higherRatedPlayer, winner, BRACKET7);
 	}
 	else if (playerRatingDifference >= 163 && playerRatingDifference <= 187)
 	{
-		determineNewRating(player1ELO, player2ELO, higherRatedPlayer, winner, BRACKET8);
+		determineNewRating(player1Pool, higherRatedPlayer, winner, BRACKET8);
 	}
 	else if (playerRatingDifference >= 188 && playerRatingDifference <= 212)
 	{
-		determineNewRating(player1ELO, player2ELO, higherRatedPlayer, winner, BRACKET9);
+		determineNewRating(player1Pool, higherRatedPlayer, winner, BRACKET9);
 	}
 	else if (playerRatingDifference >= 213 && playerRatingDifference <= 237)
 	{
-		determineNewRating(player1ELO, player2ELO, higherRatedPlayer, winner, BRACKET10);
+		determineNewRating(player1Pool, higherRatedPlayer, winner, BRACKET10);
 	}
 	else
 	{	
-		determineNewRating(player1ELO, player2ELO, higherRatedPlayer, winner, BRACKET11);
+		determineNewRating(player1Pool, higherRatedPlayer, winner, BRACKET11);
 	}
 
 
 }
 
-void determineNewRating (int* player1ELO, int* player2ELO, int higherRatedPlayer, int winner, int bracketNumber){
+void determineNewRating (int* player1Pool, int higherRatedPlayer, int winner, int bracketNumber){
 
 	if (winner == higherRatedPlayer){
 
 		if (higherRatedPlayer == PLAYER1){
 
-			*player1ELO += bracketValueTable[bracketNumber].expectedResult;
-			*player2ELO -= bracketValueTable[bracketNumber].expectedResult;
+			*player1Pool += bracketValueTable[bracketNumber].expectedResult;
+			
 		}
 
 		else{
 
-			*player2ELO += bracketValueTable[bracketNumber].expectedResult;
-			*player1ELO -= bracketValueTable[bracketNumber].expectedResult;
+			
+			*player1Pool -= bracketValueTable[bracketNumber].expectedResult;
 
 		}
 	}
@@ -158,15 +132,15 @@ void determineNewRating (int* player1ELO, int* player2ELO, int higherRatedPlayer
 
 		if (higherRatedPlayer == PLAYER1){
 
-			*player1ELO -= bracketValueTable[bracketNumber].upsetResult;
-			*player2ELO += bracketValueTable[bracketNumber].upsetResult;
+			*player1Pool -= bracketValueTable[bracketNumber].upsetResult;
+			
 
 		}
 
 		else{
 
-			*player2ELO -= bracketValueTable[bracketNumber].upsetResult;
-			*player1ELO += bracketValueTable[bracketNumber].upsetResult;
+			
+			*player1Pool += bracketValueTable[bracketNumber].upsetResult;
 		}
 
 		
@@ -174,6 +148,20 @@ void determineNewRating (int* player1ELO, int* player2ELO, int higherRatedPlayer
 
 
 } 
+
+int getPlayerOriginalELO()
+{
+	int playerElo = -1;
+
+	while(playerElo <= 0){
+
+		printf("What is your rating? (enter a number greater than 0): ");
+		scanf("%d", &playerElo);
+	}
+
+	return playerElo;
+
+}
 
 
 int main (int argc, char *argv[]){
@@ -183,19 +171,24 @@ int main (int argc, char *argv[]){
 	int higherRatedPlayer;
 	int playerRatingDifference;
 	int winner;
-	int gamesPlayed;
+	int gamesPlayed = -1;
+	int player1Pool = 0;
 	int i;
 
 	initializeBracketValueTable();
 
-	printf("How games did you play?: ");
-	scanf("%d", &gamesPlayed);
+	while(gamesPlayed <= 0){
 
-	player1ELO = getPlayerELO(1);
+		printf("How games did you play? (enter a number greater than 0): ");
+		scanf("%d", &gamesPlayed);
+	}
 
-	for (i = 0 ; i < gamesPlayed ; i ++){
+	player1ELO = getPlayerOriginalELO();
 
-		player2ELO = getPlayerELO(2);
+
+	for (i = 1 ; i <= gamesPlayed ; i ++){
+
+		player2ELO = getOpponentELO(i);
 
 		playerRatingDifference = abs(player1ELO - player2ELO);
 
@@ -213,19 +206,18 @@ int main (int argc, char *argv[]){
 			scanf("%d", &winner);
 
 		}
+
+		determineBracket(&player1Pool, higherRatedPlayer, playerRatingDifference, winner);
 	}
 	
-
 	
+	printf("\nYour Original ELO was: %d\nYour pool is %d:\n", player1ELO, player1Pool);
+
+	player1ELO += player1Pool;
 
 
-	
 
-	determineBracket(&player1ELO,&player2ELO, higherRatedPlayer, playerRatingDifference, winner);
-
-
-	printf("\nPlayer 1 rating is now %d\n", player1ELO);
-	printf("\nPlayer 2 rating is now %d\n", player2ELO);
+	printf("\nYour Rating is now %d\n", player1ELO);
 
 	system("PAUSE");	
 
